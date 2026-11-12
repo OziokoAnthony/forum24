@@ -1,0 +1,38 @@
+name: forum24
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: forum24
+      POSTGRES_PASSWORD: forum24
+      POSTGRES_DB: forum24
+    volumes:
+      - forum24-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forum24 -d forum24"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql+psycopg://forum24:forum24@db:5432/forum24
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+      SEED_ON_STARTUP: ${SEED_ON_STARTUP:-true}
+      SCHEDULER_ENABLED: ${SCHEDULER_ENABLED:-true}
+      SCHEDULER_INTERVAL_SECONDS: ${SCHEDULER_INTERVAL_SECONDS:-60}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8000}
+      CORS_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173","http://localhost:4173"]'
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+volumes:
+  forum24-pgdata:

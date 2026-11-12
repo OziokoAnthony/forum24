@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+frontend/qa/
+backend/qa/
+
+# Local configuration and secrets — never commit real values.
+# The .env.example templates are tracked on purpose.
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# Local databases (recreate with: cd backend && python -m app.seed)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp

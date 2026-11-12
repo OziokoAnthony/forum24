@@ -1,0 +1,735 @@
+@import 'tailwindcss';
+
+/*
+ * FORUM24 design system — 3D crystal editorial.
+ *
+ * Built from two references: a light editorial blog layout (white paper, cool
+ * grey-blue rules, a petrol/teal accent) and a 3D product render (near-black
+ * studio, vivid azure + cyan light, frosted glass panels).
+ *
+ * The rules that hold the whole thing together:
+ *   - Surfaces are physical: a bevel, a crisp 2px extruded bottom edge and a
+ *     tight contact shadow. Nothing floats in soft blur.
+ *   - The page is paper (near-white) with one fine grain. The only dark
+ *     surface is the hero studio and the footer, so the page keeps its
+ *     editorial lightness while the 3D moments land hard.
+ *   - Azure (sky-600) is the one action colour. Cyan is a highlight only.
+ *   - Mustard (sun-*) marks things: section rules, the featured flag, the
+ *     ranking discs and the scheduled state. It is never an action colour.
+ */
+@theme {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: Georgia, 'Iowan Old Style', 'Times New Roman', Times, serif;
+
+  /* Paper surfaces */
+  --color-page: #f2f5f8;
+  --color-paper: #ffffff;
+  --color-paper-tint: #f7f9fb;
+  --color-panel: #ffffff;
+  --color-panel-glass: rgb(255 255 255 / 0.72);
+  --color-cloud: #f7f9fb;
+  --color-mist: #eef2f6;
+  --color-cloud-deep: #e2e7ec;
+
+  /* Rules */
+  --color-line: #e2e7ec;
+  --color-line-strong: #c7ced6;
+
+  /* Text */
+  --color-ink: #111c26;
+  --color-ink-soft: #3c4b59;
+  --color-ink-muted: #5f6f7e;
+  --color-ink-faint: #93a1ae;
+
+  /* Structure */
+  --color-navy: #0f2434;
+  --color-navy-deep: #0a161e;
+  --color-navy-soft: #1b4258;
+  --color-brand: #1a6fd8;
+
+  /* Sky — vivid azure. sky-600 is the one action colour. */
+  --color-sky-50: #f1f7fd;
+  --color-sky-100: #e2eefb;
+  --color-sky-200: #c7def8;
+  --color-sky-300: #93c6f4;
+  --color-sky-400: #59a8ee;
+  --color-sky-500: #2b85e2;
+  --color-sky-600: #1a6fd8;
+  --color-sky-700: #1457ad;
+  --color-sky-800: #124688;
+  --color-sky-900: #123a6b;
+
+  /* Cyan — highlight only, never an action colour */
+  --color-cyan-200: #a8ecff;
+  --color-cyan-300: #4ed6ff;
+  --color-cyan-400: #22c1f5;
+  --color-cyan-500: #06a8df;
+
+  /* Sun — mustard markers only, never an action colour */
+  --color-sun-50: #fdfaee;
+  --color-sun-100: #faf3d4;
+  --color-sun-200: #f4e59a;
+  --color-sun-300: #ecda6e;
+  --color-sun-400: #e4ce65;
+  --color-sun-500: #d8b93c;
+  --color-sun-600: #b8951f;
+  --color-sun-700: #8f7015;
+  --color-sun-800: #6b520f;
+  --color-sun-900: #4a390b;
+
+  /* Advertising — deliberately outside the brand */
+  --color-ad-bg: #f7f9fb;
+  --color-ad-line: #c7ced6;
+  --color-ad-label: #5f6f7e;
+
+  /* Geometry — tighter than the old soft shell, so edges read as machined */
+  --radius-card: 16px;
+  --radius-control: 10px;
+  --radius-sheet: 24px;
+
+  /*
+   * One shadow family: a top bevel, a crisp 2 px extrusion and a tight
+   * contact shadow. The extrusion is what makes a surface read as a solid.
+   */
+  --shadow-card:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 1px 1px rgb(15 36 52 / 0.06),
+    0 2px 0 rgb(15 36 52 / 0.05),
+    0 10px 18px -14px rgb(15 36 52 / 0.4);
+  --shadow-card-hover:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    0 2px 3px rgb(15 36 52 / 0.08),
+    0 3px 0 rgb(15 36 52 / 0.06),
+    0 24px 36px -20px rgb(26 111 216 / 0.38);
+  --shadow-header:
+    0 1px 0 rgb(15 36 52 / 0.07),
+    0 12px 26px -22px rgb(15 36 52 / 0.55);
+  --shadow-slab:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 1px 1px rgb(15 36 52 / 0.06),
+    0 3px 0 rgb(15 36 52 / 0.05),
+    0 18px 30px -20px rgb(15 36 52 / 0.45);
+  --shadow-slab-deep:
+    inset 0 1px 0 rgb(255 255 255 / 0.85),
+    0 2px 2px rgb(15 36 52 / 0.08),
+    0 5px 0 rgb(15 36 52 / 0.06),
+    0 40px 60px -40px rgb(15 36 52 / 0.6);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    min-height: 100vh;
+    background-color: var(--color-page);
+    /*
+     * Paper with a fine grain and one soft wash. The grain is what keeps a
+     * flat background from looking like an exported mock-up.
+     */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.32'/%3E%3C/svg%3E"),
+      radial-gradient(70rem 42rem at 14% -10%, rgb(255 255 255 / 0.95), transparent 64%),
+      linear-gradient(180deg, #f7f9fb 0%, #eef2f6 46%, #f4f7fa 100%);
+    background-attachment: fixed;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-navy);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+  /* Anchor targets clear the sticky masthead */
+  :target {
+    scroll-margin-top: 7rem;
+  }
+  input,
+  select,
+  textarea {
+    background-color: #ffffff;
+    color: var(--color-ink);
+    border-color: var(--color-line);
+    color-scheme: light;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-ink-muted);
+  }
+  ::selection {
+    background: rgb(228 206 101 / 0.55);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-sky-500);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /*
+   * The animated background. Three oversized radial gradients drift around on
+   * long, offset cycles. Only `transform` animates, so the gradients stay on
+   * the GPU and are never repainted.
+   */
+  .aurora {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .aurora--fixed {
+    position: fixed;
+    z-index: -1;
+  }
+  .aurora--studio {
+    z-index: 0;
+  }
+  .aurora-blob {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    will-change: transform;
+  }
+  .aurora--fixed .aurora-blob--1 {
+    width: 64vmax;
+    left: -16vmax;
+    top: -20vmax;
+    background: radial-gradient(circle at center, rgb(41 133 226 / 0.34), rgb(41 133 226 / 0) 68%);
+    animation: aurora-drift-1 38s ease-in-out infinite;
+  }
+  .aurora--fixed .aurora-blob--2 {
+    width: 54vmax;
+    right: -16vmax;
+    top: 4vmax;
+    background: radial-gradient(circle at center, rgb(34 193 245 / 0.26), rgb(34 193 245 / 0) 68%);
+    animation: aurora-drift-2 47s ease-in-out infinite;
+  }
+  .aurora--fixed .aurora-blob--3 {
+    width: 50vmax;
+    left: 24vmax;
+    bottom: -22vmax;
+    background: radial-gradient(circle at center, rgb(228 206 101 / 0.24), rgb(228 206 101 / 0) 68%);
+    animation: aurora-drift-3 56s ease-in-out infinite;
+  }
+
+  /* Inside the studio the same wash becomes a screen-blended glow. */
+  .aurora--studio .aurora-blob {
+    mix-blend-mode: screen;
+  }
+  .aurora--studio .aurora-blob--1 {
+    width: 72%;
+    left: -20%;
+    top: -34%;
+    background: radial-gradient(circle at center, rgb(41 133 226 / 0.5), rgb(41 133 226 / 0) 66%);
+    animation: aurora-drift-1 26s ease-in-out infinite;
+  }
+  .aurora--studio .aurora-blob--2 {
+    width: 58%;
+    right: -14%;
+    top: -10%;
+    background: radial-gradient(circle at center, rgb(34 193 245 / 0.42), rgb(34 193 245 / 0) 66%);
+    animation: aurora-drift-2 32s ease-in-out infinite;
+  }
+  .aurora--studio .aurora-blob--3 {
+    width: 54%;
+    left: 28%;
+    bottom: -30%;
+    background: radial-gradient(circle at center, rgb(228 206 101 / 0.34), rgb(228 206 101 / 0) 66%);
+    animation: aurora-drift-3 38s ease-in-out infinite;
+  }
+
+  /* A slow light sweep that rotates around the studio. */
+  .studio-sweep {
+    position: absolute;
+    inset: -35%;
+    pointer-events: none;
+    background: conic-gradient(
+      from 0deg,
+      rgb(34 193 245 / 0) 0deg 250deg,
+      rgb(34 193 245 / 0.14) 320deg,
+      rgb(228 206 101 / 0.1) 352deg,
+      rgb(34 193 245 / 0) 360deg
+    );
+    animation: aurora-sweep 34s linear infinite;
+    will-change: transform;
+  }
+
+  /* A quieter wash for dense, text-heavy screens such as the admin desk. */
+  .aurora--quiet .aurora-blob {
+    opacity: 0.5;
+  }
+
+  /* A white panel with a bevel and an extruded bottom edge. */
+  .slab {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-slab);
+  }
+
+  /*
+   * The dark 3D studio: near-black panel, cyan/azure light sources and grain.
+   * Used for the hero, so the 3D moment has somewhere to happen.
+   */
+  .studio {
+    position: relative;
+    isolation: isolate;
+    background-color: #0c1319;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"),
+      radial-gradient(70% 90% at 50% -10%, #1d3242 0%, transparent 62%),
+      linear-gradient(180deg, #121b23 0%, #090f14 100%);
+    border: 1px solid rgb(255 255 255 / 0.09);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      inset 0 -2px 0 rgb(0 0 0 / 0.7),
+      0 2px 0 rgb(255 255 255 / 0.35),
+      0 36px 70px -46px rgb(10 22 32 / 0.85);
+  }
+
+  /* Frosted glass panel for use inside the studio. */
+  .glass-dark {
+    background: linear-gradient(158deg, rgb(255 255 255 / 0.11) 0%, rgb(255 255 255 / 0.04) 100%);
+    border: 1px solid rgb(255 255 255 / 0.13);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.14),
+      0 18px 40px -26px rgb(0 0 0 / 0.95);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+  }
+
+  /*
+   * 3D tilt. Small on purpose — two to three degrees reads as depth, more
+   * than that reads as a toy.
+   */
+  .tilt-3d {
+    transform-style: preserve-3d;
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .tilt-3d:hover,
+  .tilt-3d:focus-within {
+    z-index: 2;
+    transform: perspective(1400px) rotateX(3deg) translateY(-6px);
+    border-color: rgb(26 111 216 / 0.35);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Extruded primary action: presses down like a real key. */
+  .btn-3d {
+    color: #ffffff;
+    /*
+     * The light stop is a thin specular band, not half the button, so white
+     * label text keeps its contrast across the whole glyph height.
+     */
+    background-image: linear-gradient(
+      180deg,
+      #5b9df0 0%,
+      #2b85e2 18%,
+      #1a6fd8 52%,
+      #1457ad 100%
+    );
+    border: 1px solid rgb(10 40 75 / 0.5);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.42),
+      inset 0 -2px 0 rgb(8 38 70 / 0.25),
+      0 3px 0 #0d3f7d,
+      0 12px 20px -12px rgb(26 111 216 / 0.75);
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.12s ease,
+      filter 0.15s ease;
+  }
+  .btn-3d:hover {
+    filter: brightness(1.06);
+  }
+  .btn-3d:active {
+    transform: translateY(3px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.32),
+      inset 0 -1px 0 rgb(8 38 70 / 0.22),
+      0 0 0 #0d3f7d,
+      0 6px 12px -8px rgb(26 111 216 / 0.6);
+  }
+
+  /* Pressed-in glass button — the secondary action. */
+  .btn-glass {
+    color: var(--color-sky-800);
+    background-image: linear-gradient(180deg, #ffffff 0%, #f4f7fa 100%);
+    border: 1px solid var(--color-line-strong);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.95),
+      0 2px 0 rgb(15 36 52 / 0.09),
+      0 10px 16px -14px rgb(15 36 52 / 0.55);
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.12s ease,
+      border-color 0.15s ease;
+  }
+  .btn-glass:hover {
+    border-color: rgb(26 111 216 / 0.45);
+  }
+  .btn-glass:active {
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 0 0 rgb(15 36 52 / 0.09),
+      0 4px 8px -8px rgb(15 36 52 / 0.5);
+  }
+
+  /* Raised mustard marker: the featured flag, kickers and counters. */
+  .badge-3d {
+    color: #3a2c08;
+    background-image: linear-gradient(180deg, #f0e295 0%, #e4ce65 55%, #c9a733 100%);
+    border: 1px solid rgb(143 112 21 / 0.35);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 2px 0 #a8871f,
+      0 10px 18px -10px rgb(184 149 31 / 0.85);
+  }
+
+  /* A small raised mustard disc, used for ranking numerals. */
+  .disc-3d {
+    color: #3a2c08;
+    background-image: linear-gradient(180deg, #f0e295 0%, #e4ce65 60%, #c9a733 100%);
+    border: 1px solid rgb(143 112 21 / 0.3);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 2px 0 #a8871f,
+      0 6px 12px -8px rgb(184 149 31 / 0.8);
+  }
+
+  /* Beveled masthead / footer rule: azure into mustard into cyan. */
+  .rule-3d {
+    background-image: linear-gradient(
+      90deg,
+      #1a6fd8 0%,
+      #e4ce65 46%,
+      #22c1f5 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.5),
+      inset 0 -1px 0 rgb(15 36 52 / 0.18);
+  }
+  .rule-3d-sun {
+    background-image: linear-gradient(
+      90deg,
+      #e4ce65 0%,
+      #f2e59d 40%,
+      #22c1f5 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.45),
+      inset 0 -1px 0 rgb(15 36 52 / 0.2);
+  }
+
+  /* Small status / filter pill with a pressed-in face. */
+  .pill-3d {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 1px 0 rgb(15 36 52 / 0.1),
+      0 5px 10px -8px rgb(15 36 52 / 0.5);
+  }
+
+  /* Uppercase editorial label used above headlines and in sidebars */
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  /* Reading column for articles */
+  .prose-article {
+    color: var(--color-ink);
+    font-size: 1.125rem;
+    line-height: 1.75;
+    max-width: 68ch;
+  }
+  .prose-article > * + * {
+    margin-top: 1.15em;
+  }
+  .prose-article p {
+    color: #1c2b38;
+  }
+  .prose-article > p:first-of-type::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-size: 3.3em;
+    font-weight: 700;
+    line-height: 0.82;
+    padding: 0.06em 0.1em 0 0;
+    color: var(--color-navy);
+  }
+  .prose-article h2 {
+    margin-top: 2.1em;
+    padding-top: 0.7em;
+    border-top: 1px solid var(--color-line);
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-navy);
+  }
+  .prose-article h3 {
+    margin-top: 1.6em;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--color-navy);
+  }
+  .prose-article a {
+    color: var(--color-sky-700);
+    text-decoration: underline;
+    text-decoration-color: rgb(41 133 226 / 0.5);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  .prose-article blockquote {
+    margin-block: 2em;
+    padding: 1.2rem 0 1.3rem;
+    border-top: 2px solid var(--color-sun-400);
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    line-height: 1.35;
+    font-weight: 700;
+    color: var(--color-navy);
+  }
+  .prose-article blockquote::before {
+    content: '\201C';
+    display: block;
+    margin-bottom: 0.15rem;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    line-height: 0.7;
+    color: var(--color-sun-500);
+  }
+  .prose-article ul {
+    list-style: disc;
+    padding-left: 1.4rem;
+  }
+  .prose-article ol {
+    list-style: decimal;
+    padding-left: 1.4rem;
+  }
+  .prose-article li {
+    padding-left: 0.2rem;
+  }
+  .prose-article li + li {
+    margin-top: 0.4em;
+  }
+  .prose-article li::marker {
+    color: var(--color-sky-600);
+  }
+
+  /* Ad container — reserved height prevents layout shift.
+     Neutral and dashed on purpose: it must never look like a control. */
+  .ad-slot {
+    display: grid;
+    place-items: center;
+    gap: 0.3rem;
+    min-height: 120px;
+    margin-block: 2rem;
+    background: var(--color-ad-bg);
+    border: 1px dashed var(--color-ad-line);
+    border-radius: var(--radius-card);
+    color: var(--color-ad-label);
+    text-align: center;
+    box-shadow: inset 0 1px 2px rgb(15 36 52 / 0.05);
+  }
+  .ad-slot .ad-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .ad-slot .ad-hint {
+    font-size: 12px;
+    color: var(--color-ink-faint);
+  }
+
+  /* Card lift — a real float in perspective, matching the 3D language. */
+  .lift {
+    transform-style: preserve-3d;
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .lift:hover,
+  .lift:focus-within {
+    z-index: 2;
+    transform: perspective(1400px) rotateX(1.5deg) translateY(-6px);
+    border-color: rgb(26 111 216 / 0.3);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-mist) 25%,
+      var(--color-cloud-deep) 37%,
+      var(--color-mist) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+
+  /* Video player — the shell fills the screen when fullscreen is requested */
+  .video-shell:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+    background: #020617;
+  }
+
+  /* Seek slider: 4 px track drawn on the input, 20 px hit area */
+  .player-range {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 20px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 4px;
+    cursor: pointer;
+  }
+  .player-range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: transparent;
+  }
+  .player-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    margin-top: -4px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: var(--color-sky-500);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+  }
+  .player-range::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: transparent;
+  }
+  .player-range::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: var(--color-sky-500);
+  }
+  .player-range:focus-visible {
+    outline: 2px solid var(--color-cyan-300);
+    outline-offset: 4px;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+/* The aurora paths: each blob circles its own corner of the frame. */
+@keyframes aurora-drift-1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(26%, 14%, 0) scale(1.14);
+  }
+  50% {
+    transform: translate3d(34%, 44%, 0) scale(0.94);
+  }
+  75% {
+    transform: translate3d(6%, 30%, 0) scale(1.08);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(-24%, 16%, 0) scale(1.1);
+  }
+  50% {
+    transform: translate3d(-12%, 44%, 0) scale(0.92);
+  }
+  75% {
+    transform: translate3d(-32%, 22%, 0) scale(1.06);
+  }
+}
+
+@keyframes aurora-drift-3 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(22%, -18%, 0) scale(1.12);
+  }
+  50% {
+    transform: translate3d(-14%, -38%, 0) scale(0.95);
+  }
+  75% {
+    transform: translate3d(-26%, -12%, 0) scale(1.07);
+  }
+}
+
+@keyframes aurora-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .lift:hover,
+  .lift:focus-within,
+  .tilt-3d:hover,
+  .tilt-3d:focus-within {
+    transform: none;
+  }
+}

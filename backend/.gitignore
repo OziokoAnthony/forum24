@@ -1,0 +1,20 @@
+# Local development artefacts
+.env
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+dist/
+build/
+*.egg-info/
+
+# Alembic generated temp database used while authoring migrations
+alembic_tmp.db
